@@ -3,20 +3,44 @@ mongoose.connect('mongodb://localhost/fetcher');
 
 let repoSchema = mongoose.Schema({
   // TODO: your schema here!
-  id: Number,
-  full_name: String,
-  forks: Number
+  id: {
+  	type: String,
+  	index: { unique: true },
+  	required: true,
+  	dropDups: true
+  },
+  full_name: {
+  	type: String,
+    index: { unique: true },
+  	required: true
+  },
+  forks: {
+  	type: Number,
+  	required: true
+  }
 });
 
 let Repo = mongoose.model('Repo', repoSchema);
-//let repo = new Repo({});
 
-let save = (err, repo) => {
+let save = (repos) => {
   // TODO: Your code here
   // This function should save a repo or repos to
   // the MongoDB
-  if(err) { return console.error(err); }
-  console.log(repo);
+  //console.log('inside of db repos: ', repos);
+  repos.forEach(repo => {
+  	repo = new Repo({id: repo.id, full_name: repo.full_name, forks: repo.forks});
+  	repo.save((err, repo) => {
+  		if (err) { console.log(err); }
+  		else { console.log('save success', repo); }
+  	});
+  });
+}
+
+let retrieve = () => {
+    return Repo.find((err, repos) => {
+      if (err) { console.log(err); }
+    });
 }
 
 module.exports.save = save;
+module.exports.retrieve = retrieve;
