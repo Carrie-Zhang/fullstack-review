@@ -14,7 +14,7 @@ let repoSchema = mongoose.Schema({
     index: { unique: true },
   	required: true
   },
-  forks: {
+  watchers: {
   	type: Number,
   	required: true
   }
@@ -28,7 +28,7 @@ let save = (repos) => {
   // the MongoDB
   //console.log('inside of db repos: ', repos);
   repos.forEach(repo => {
-  	repo = new Repo({id: repo.id, full_name: repo.full_name, forks: repo.forks});
+  	repo = new Repo({id: repo.id, full_name: repo.full_name, watchers: repo.watchers});
   	repo.save((err, repo) => {
   		if (err) { console.log(err); }
   		else { console.log('save success', repo); }
@@ -39,7 +39,9 @@ let save = (repos) => {
 let retrieve = () => {
     return Repo.find((err, repos) => {
       if (err) { console.log(err); }
-    });
+    })
+    .sort({watchers: -1})
+    .limit(25);
 }
 
 module.exports.save = save;

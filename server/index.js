@@ -19,9 +19,10 @@ app.post('/repos', function (req, res) {
   getReposByUsername.getReposByUsername(req.body.username, repos => {
   	//console.log('inside of server getReposByUsername', repos);
   	database.save(JSON.parse(repos));
+
+  	res.end();
   });
 
-  res.end();
 });
 
 app.get('/repos', function (req, res) {
